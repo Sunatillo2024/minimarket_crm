@@ -1,0 +1,145 @@
+/* MiniMarket CRM - Custom Styles */
+
+/* Global styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+    padding-bottom: 2rem;
+}
+
+/* Navbar customization */
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+.navbar .nav-link {
+    font-weight: 500;
+}
+
+/* Card styling */
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: none;
+    transition: box-shadow 0.2s;
+}
+
+.card:hover {
+    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+}
+
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+    font-weight: 600;
+}
+
+/* Dashboard summary cards */
+.card.text-white .card-title {
+    opacity: 0.8;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card.text-white .card-text {
+    font-weight: 700;
+}
+
+/* Buttons */
+.btn-lg {
+    padding: 0.65rem 1.5rem;
+    font-weight: 500;
+}
+
+.btn-success, .btn-primary, .btn-warning, .btn-info {
+    color: #fff;
+}
+
+.btn-warning {
+    color: #212529;
+}
+
+.btn-outline-primary:hover {
+    color: #fff;
+}
+
+/* Tables */
+.table th {
+    font-weight: 600;
+    border-top: none;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0,123,255,0.05);
+}
+
+/* Forms */
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102,126,234,0.25);
+}
+
+/* Badge */
+.badge {
+    font-weight: 500;
+    padding: 0.4rem 0.7rem;
+}
+
+/* Alerts */
+.alert {
+    border-radius: 8px;
+}
+
+/* Pagination */
+.pagination .page-link {
+    color: #667eea;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+/* POS specific */
+.cart-items .cart-item {
+    transition: background 0.1s;
+}
+
+.cart-items .cart-item:hover {
+    background-color: #f1f3f5;
+}
+
+#barcode-input {
+    font-size: 1.5rem;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+    .card-body {
+        padding: 1rem;
+    }
+    .display-6 {
+        font-size: 1.5rem;
+    }
+    .btn-pos {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+    }
+    #barcode-input {
+        font-size: 1.2rem;
+        height: 3rem;
+    }
+}

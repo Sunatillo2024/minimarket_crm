@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add Stock - MiniMarket CRM{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-box-arrow-in-down"></i> Add Stock to Inventory</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Scan or enter the product barcode. The product must already exist in the system.
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="id_barcode" class="form-label fw-bold">Barcode</label>
+                        {{ form.barcode }}
+                        {% if form.barcode.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.barcode.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="id_quantity" class="form-label fw-bold">Quantity to Add</label>
+                        {{ form.quantity }}
+                        {% if form.quantity.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.quantity.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="id_note" class="form-label fw-bold">Note (Optional)</label>
+                        {{ form.note }}
+                        <div class="form-text">e.g., Supplier name, invoice number, etc.</div>
+                        {% if form.note.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.note.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'inventory:list' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-check-circle"></i> Add Stock
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-focus barcode field and keep focus after adding
+    document.addEventListener('DOMContentLoaded', function() {
+        const barcodeInput = document.getElementById('id_barcode');
+        if (barcodeInput) {
+            barcodeInput.focus();
+        }
+    });
+</script>
+{% endblock %} 

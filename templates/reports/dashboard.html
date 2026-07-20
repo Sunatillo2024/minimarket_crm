@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - MiniMarket CRM{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h2 class="mb-4"><i class="bi bi-speedometer2"></i> Dashboard</h2>
+    
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Today's Sales</h5>
+                    <p class="card-text display-6">{{ today_sales }} som</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Today's Profit</h5>
+                    <p class="card-text display-6">{{ today_profit }} som</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Today's Expenses</h5>
+                    <p class="card-text display-6">{{ today_expenses }} som</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card text-white {% if net_profit >= 0 %}bg-info{% else %}bg-danger{% endif %}">
+                <div class="card-body">
+                    <h5 class="card-title">Net Profit</h5>
+                    <p class="card-text display-6">{{ net_profit }} som</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Value & Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="bi bi-boxes"></i> Inventory Summary</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Total Products:</strong> {{ total_products }}</p>
+                    <p><strong>Inventory Value:</strong> {{ inventory_value }} som</p>
+                    <p><strong>Low Stock (≤5):</strong> {{ low_stock_products|length }}</p>
+                    <p><strong>Out of Stock:</strong> {{ out_of_stock_products|length }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Low Stock Alerts</h5>
+                </div>
+                <div class="card-body" style="max-height: 200px; overflow-y: auto;">
+                    {% if low_stock_products %}
+                        <ul class="list-group list-group-flush">
+                            {% for product in low_stock_products %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ product.name }}
+                                    <span class="badge bg-warning text-dark">{{ product.current_stock }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No low stock products.</p>
+                    {% endif %}
+                    {% if out_of_stock_products %}
+                        <hr>
+                        <p class="text-danger"><strong>Out of Stock:</strong></p>
+                        <ul>
+                            {% for product in out_of_stock_products %}
+                                <li>{{ product.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{% url 'sales:pos' %}" class="btn btn-success btn-lg">
+                            <i class="bi bi-cart-plus"></i> New Sale
+                        </a>
+                        <a href="{% url 'inventory:add' %}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-box-arrow-in-down"></i> Add Stock
+                        </a>
+                        <a href="{% url 'expenses:add' %}" class="btn btn-warning btn-lg">
+                            <i class="bi bi-wallet2"></i> Add Expense
+                        </a>
+                        <a href="{% url 'products:add' %}" class="btn btn-info btn-lg">
+                            <i class="bi bi-box"></i> Add Product
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

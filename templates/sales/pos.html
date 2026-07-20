@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Point of Sale - MiniMarket CRM{% endblock %}
+
+{% block extra_css %}
+<style>
+    .pos-container {
+        max-width: 100%;
+    }
+    .cart-item {
+        border-bottom: 1px solid #dee2e6;
+        padding: 0.5rem 0;
+    }
+    .cart-item:last-child {
+        border-bottom: none;
+    }
+    .cart-item .product-name {
+        font-weight: 500;
+    }
+    .cart-item .product-price {
+        font-weight: 600;
+    }
+    .total-row {
+        font-size: 1.5rem;
+        font-weight: 700;
+        padding-top: 1rem;
+        border-top: 3px solid #333;
+    }
+    .btn-pos {
+        font-size: 1.1rem;
+        padding: 0.75rem 1.5rem;
+    }
+    #barcode-input {
+        font-size: 1.5rem;
+        height: 4rem;
+        text-align: center;
+        font-weight: 500;
+        letter-spacing: 2px;
+    }
+    .empty-cart {
+        padding: 3rem 0;
+        color: #999;
+    }
+    .payment-section {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pos-container">
+    <div class="row">
+        <!-- Left: Barcode input and cart -->
+        <div class="col-md-8">
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-upc-scan"></i> Scan Product</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'sales:add_item' %}" id="add-item-form">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            {{ add_form.barcode }}
+                            <button class="btn btn-primary btn-lg" type="submit">
+                                <i class="bi bi-plus-circle"></i> Add
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-cart"></i> Current Cart</h5>
+                    <span class="badge bg-light text-dark">{{ cart_items|length }} items</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="cart-items" style="max-height: 400px; overflow-y: auto;">
+                        {% if cart_items %}
+                            {% for item in cart_items %}
+                            <div class="cart-item d-flex justify-content-between align-items-center px-3 py-2">
+                                <div>
+                                    <span class="product-name">{{ item.product.name }}</span>
+                                    <span class="badge bg-secondary ms-2">{{ item.quantity }}×</span>
+                                    <span class="product-price ms-2">{{ item.product.sell_price }} som</span>
+                                </div>
+                                <div>
+                                    <span class="fw-bold me-3">{{ item.subtotal }} som</span>
+                                    <form method="post" action="{% url 'sales:remove_item' item.product.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-dash-circle"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-cart text-center">
+                                <i class="bi bi-cart-x" style="font-size: 3rem;"></i>
+                                <p class="mt-2">Cart is empty. Scan a product to start.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="total-row d-flex justify-content-between align-items-center px-3 py-2 bg-light">
+                        <span>Total:</span>
+                        <span>{{ total }} som</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Payment and actions -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-cash"></i> Payment</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'sales:complete_sale' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_amount_paid" class="form-label">Amount Received</label>
+                            {{ payment_form.amount_paid }}
+                            <div class="form-text">Enter amount paid by customer.</div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg btn-pos" {% if not cart_items %}disabled{% endif %}>
+                                <i class="bi bi-check-circle"></i> Complete Sale
+                            </button>
+                        </div>
+                    </form>
+                    <hr>
+                    <form method="post" action="{% url 'sales:clear_cart' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger w-100" {% if not cart_items %}disabled{% endif %}>
+                            <i class="bi bi-trash"></i> Clear Cart
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="mt-3">
+                <a href="{% url 'sales:today' %}" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-calendar-day"></i> View Today's Sales
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-submit barcode when scanner (keyboard) finishes
+    document.addEventListener('DOMContentLoaded', function() {
+        const barcodeInput = document.getElementById('id_barcode');
+        const form = document.getElementById('add-item-form');
+        let timer = null;
+
+        barcodeInput.addEventListener('keydown', function(e) {
+            // If Enter key is pressed, submit immediately (for manual entry)
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                form.submit();
+                return;
+            }
+            // For barcode scanner: after last key, wait 50ms then submit
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                if (barcodeInput.value.trim() !== '') {
+                    form.submit();
+                }
+            }, 50);
+        });
+
+        // Keep focus on barcode input
+        barcodeInput.focus();
+        document.addEventListener('click', function() {
+            barcodeInput.focus();
+        });
+    });
+</script>
+{% endblock %}

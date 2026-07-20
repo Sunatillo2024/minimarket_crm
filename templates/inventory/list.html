@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inventory Transactions - MiniMarket CRM{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2><i class="bi bi-archive"></i> Inventory Transactions</h2>
+    <a href="{% url 'inventory:add' %}" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Add Stock
+    </a>
+</div>
+
+<!-- Search -->
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Search by product name, barcode, or note..." value="{{ request.GET.search|default:'' }}">
+            <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Search</button>
+            {% if request.GET.search %}
+                <a href="{% url 'inventory:list' %}" class="btn btn-outline-secondary">Clear</a>
+            {% endif %}
+        </div>
+    </div>
+</form>
+
+<!-- Transactions Table -->
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Date/Time</th>
+                <th>Product</th>
+                <th>Type</th>
+                <th>Quantity</th>
+                <th>Performed By</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+            <tr>
+                <td>{{ transaction.created_at|date:"Y-m-d H:i" }}</td>
+                <td>
+                    <a href="{% url 'products:edit' transaction.product.id %}">
+                        {{ transaction.product.name }}
+                    </a>
+                    <br><small class="text-muted">{{ transaction.product.barcode }}</small>
+                </td>
+                <td>
+                    <span class="badge {% if transaction.transaction_type == 'IN' %}bg-success{% else %}bg-danger{% endif %}">
+                        {{ transaction.get_transaction_type_display }}
+                    </span>
+                </td>
+                <td>{{ transaction.quantity }}</td>
+                <td>{{ transaction.performed_by.username|default:"System" }}</td>
+                <td>{{ transaction.note|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No inventory transactions found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">&laquo; First</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Previous</a></li>
+        {% endif %}
+        <li class="page-item active"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+        {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Last &raquo;</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
