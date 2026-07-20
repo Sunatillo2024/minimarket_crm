@@ -1,0 +1,103 @@
+# ===========================
+# Python
+# ===========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# ===========================
+# Virtual Environment
+# ===========================
+venv/
+.venv/
+env/
+ENV/
+
+# ===========================
+# Environment Variables
+# ===========================
+.env
+.env.*
+!.env.example
+
+# ===========================
+# Django
+# ===========================
+*.log
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Static files (agar collectstatic ishlatilsa)
+staticfiles/
+
+# ===========================
+# Migrations (ixtiyoriy)
+# ===========================
+# */migrations/
+# !*/migrations/__init__.py
+
+# ===========================
+# IDE
+# ===========================
+.idea/
+.vscode/
+*.code-workspace
+
+# ===========================
+# OS Files
+# ===========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===========================
+# Testing
+# ===========================
+.pytest_cache/
+.coverage
+htmlcov/
+.cache/
+.tox/
+.nox/
+
+# ===========================
+# Type Checking
+# ===========================
+.mypy_cache/
+.pyre/
+.pytype/
+
+# ===========================
+# Lint
+# ===========================
+.ruff_cache/
+
+# ===========================
+# Build
+# ===========================
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ===========================
+# Jupyter
+# ===========================
+.ipynb_checkpoints/
+
+# ===========================
+# Logs
+# ===========================
+logs/
+*.log
+
+# ===========================
+# Temporary Files
+# ===========================
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
